@@ -151,7 +151,7 @@ final class TddTests: XCTestCase {
     
     func test_fizz_not_applicable(){
         let result = fizz?.printFizzBuzz(x: 17)
-        XCTAssertEqual(result, "Not Applicable")
+        XCTAssertEqual(result, "17")
     }
     
 }

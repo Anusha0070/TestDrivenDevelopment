@@ -17,6 +17,6 @@ struct Fizz{
             return "Buzz"
         }
         
-        return "Not Applicable"
+        return String(x)
     }
 }
