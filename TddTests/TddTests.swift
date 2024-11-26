@@ -40,11 +40,20 @@ final class TddTests: XCTestCase {
     
     var fizz: Fizz?
     
+    var account: Account?
+    
+    var capturedMessage : String?
+    
     override func setUpWithError() throws {
         objCalculator = Calculator()
         employee = Employee(name: "Anusha", salary: 1000, position: "Developer")
         user = UserModel(username: "Anusha123", password: "password")
         fizz = Fizz()
+        account = Account(initialBalance: 1000)
+        
+        account?.fatalErrorHandler = { message in
+            self.capturedMessage = message
+        }
     }
 
     override func tearDownWithError() throws {
@@ -52,6 +61,7 @@ final class TddTests: XCTestCase {
         employee = nil
         user = nil
         fizz = nil
+        account = nil
     }
     
     func test_sum_successful() {
@@ -153,5 +163,47 @@ final class TddTests: XCTestCase {
         let result = fizz?.printFizzBuzz(x: 17)
         XCTAssertEqual(result, "17")
     }
+    
+    func test_deposit(){
+        account?.deposit(amount: 1000)
+        let result = account?.getBalance()
+        XCTAssertEqual(result, 2000)
+    }
+    
+    func testDepositNegativeAmount() {
+        account?.fatalErrorHandler = { message in
+            self.capturedMessage = message
+        }
+        
+        account?.deposit(amount: -100)
+        XCTAssertEqual(self.capturedMessage, "Deposit amount must be positive")
+
+    }
+    
+    func test_withdraw(){
+        account?.withdraw(amount: 500)
+        let result = account?.getBalance()
+        XCTAssertEqual(result, 500)
+    }
+    
+    func testWithdrawNegativeAmount() {
+        
+        account?.withdraw(amount: -100)
+        account?.fatalErrorHandler = { message in
+            self.capturedMessage = message
+        }
+        XCTAssertEqual(capturedMessage, "Withdrawal amount must be positive")
+
+    }
+    
+    func testWithdrawAmountGreaterThanBalance() {
+        
+        account?.withdraw(amount: 1200)
+        account?.fatalErrorHandler = { message in
+            self.capturedMessage = message
+        }
+        XCTAssertEqual(self.capturedMessage, "Insufficient funds")
+    }
+    
     
 }
